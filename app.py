@@ -8,7 +8,7 @@ label = {
    1:'good'
 }
 
-nlp = spacy.load('en_core_web_sm')
+nlp = spacy.load('en_core_web_md')
 
 def preprocess(text):
     L = []
@@ -37,7 +37,8 @@ class MovieReviewClassification(nn.Module):
         input_size=input_dim,
         hidden_size=hidden_dim,
         num_layers=layer_dim,
-        batch_first=True)
+        batch_first=True,
+        dropout=0.2)
     #batch_first to have (batch_dim, seq_dim, feature_dim)
     self.fc = nn.Linear(hidden_dim, output_dim)
 
@@ -52,27 +53,27 @@ class MovieReviewClassification(nn.Module):
     out = self.fc(out)
     return out
   
-input_dim = 96
+input_dim = 300
 hidden_dim = 32
 layer_dim = 2
 output_dim = 1
 
 model = MovieReviewClassification(input_dim,hidden_dim,layer_dim,output_dim).to(device)
 
-model.load_state_dict(torch.load('final2.pth',map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('md6.pth',map_location=torch.device('cpu')))
 
 def prediction(text):
     preprocessed = preprocess(text)
     input = torch.FloatTensor(num_vec(preprocessed)).unsqueeze(0).to(device)
     with torch.no_grad():
         output = model(input)
-        # prob = torch.sigmoid(output)
-        pred = torch.round(output)
-        return label[int(pred.item())]
+        prob = torch.sigmoid(output)
+        pred = torch.round(prob)
+        return label[pred.item()]
 
    
 demo = gr.Interface(fn=prediction, inputs="text", outputs="text",title='Movie Review Classification',article='created by amith')
     
 if __name__ == "__main__":
-    demo.launch(share=True)   
+    demo.launch(share=True)
    
