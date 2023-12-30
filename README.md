@@ -3,6 +3,7 @@
 A deep learning project for classifying movie reviews as positive or negative using SpaCy and PyTorch.
 
 ![Movie Review Sentiment Analysis](https://github.com/amith7025/movie-review-classification/blob/main/Screenshot%202023-12-30%20085144.png)
+![Movie Review Sentiment Analysis]()
 
 ## Overview
 
